@@ -17,6 +17,8 @@ func main() {
 
 	go func() {
 		wg.Wait()
+
+		close(nums)
 		close(results)
 	}()
 
@@ -26,11 +28,10 @@ func main() {
 }
 
 func createRandSlice(ch chan int, wg *sync.WaitGroup) {
-	for range 10 {
+	for i := 0; i < 10; i++ {
 		ch <- rand.Intn(100)
 	}
 	wg.Done()
-	close(ch)
 }
 
 func powSlice(nums <-chan int, results chan<- int, wg *sync.WaitGroup) {

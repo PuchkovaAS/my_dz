@@ -1,4 +1,4 @@
-package hasing
+package hashing
 
 import (
 	"crypto/sha256"

@@ -14,9 +14,9 @@ type SendMsg struct {
 	TextMsg    string
 }
 
-func SendEmail(emailConfig *configs.EmailConfig, msg *SendMsg) {
+func SendEmail(emailConfig *configs.EmailConfig, msg *SendMsg) error {
 	e := email.NewEmail()
-	e.From = msg.AddressTo
+	e.From = emailConfig.Email
 	e.To = []string{msg.AddressTo}
 	e.Subject = msg.SubjectMsg
 	e.Text = []byte(msg.TextMsg)
@@ -26,10 +26,11 @@ func SendEmail(emailConfig *configs.EmailConfig, msg *SendMsg) {
 			"",
 			emailConfig.Email,
 			emailConfig.Password,
-			emailConfig.Address,
+			emailConfig.SmtpServer,
 		),
 	)
 	if err != nil {
-		log.Fatal("err: ", err)
+		log.Printf("err: %s", err)
 	}
+	return err
 }

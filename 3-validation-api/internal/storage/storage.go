@@ -42,7 +42,7 @@ func writeJSON(filename string, data []DataJson) error {
 	return nil
 }
 
-func ChechHash(storageFile string, hashString string) bool {
+func CheckHash(storageFile string, hashString string) bool {
 	data, err := readJSON(storageFile)
 	if err != nil {
 		return false

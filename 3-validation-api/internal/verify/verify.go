@@ -3,7 +3,7 @@ package verify
 import (
 	"3-validation-api/configs"
 	"3-validation-api/internal/storage"
-	"3-validation-api/pkg/hasing"
+	"3-validation-api/pkg/hashing"
 	"3-validation-api/pkg/linker"
 	"3-validation-api/pkg/mailer"
 	"3-validation-api/pkg/request"
@@ -35,7 +35,7 @@ func (handler *VerifyHandler) Send() http.HandlerFunc {
 			return
 		}
 
-		hashString := hasing.GetHashString(body.Email)
+		hashString := hashing.GetHashString(body.Email)
 		urlLink := linker.GetHashUrl("http://localhost:8081/verify", hashString)
 
 		msg := mailer.SendMsg{
@@ -43,7 +43,16 @@ func (handler *VerifyHandler) Send() http.HandlerFunc {
 			SubjectMsg: "Verification",
 			TextMsg:    urlLink,
 		}
-		mailer.SendEmail(&handler.Config.Email, &msg)
+		err = mailer.SendEmail(&handler.Config.Email, &msg)
+		if err != nil {
+
+			data := SendResponse{
+				Status: "email did`t send",
+			}
+			response.Json(w, data, http.StatusAccepted)
+			return
+
+		}
 
 		storage.AddEmailHash(
 			handler.Config.Storage.Path,
@@ -61,19 +70,18 @@ func (handler *VerifyHandler) Send() http.HandlerFunc {
 
 func (handler *VerifyHandler) Verify() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		path := strings.TrimPrefix(req.URL.Path, "/verify/")
-		hashString := strings.Trim(path, "{}")
+		hashString := strings.TrimPrefix(req.URL.Path, "/verify/")
 
-		var data SendResponse
-		if isVerify := storage.ChechHash(
+		var data VerifyResponse
+		if isVerify := storage.CheckHash(
 			handler.Config.Storage.Path,
 			hashString); isVerify {
-			data = SendResponse{
-				Status: "true",
+			data = VerifyResponse{
+				Status: true,
 			}
 		} else {
-			data = SendResponse{
-				Status: "false",
+			data = VerifyResponse{
+				Status: false,
 			}
 		}
 

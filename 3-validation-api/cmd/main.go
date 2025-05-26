@@ -4,6 +4,7 @@ import (
 	"3-validation-api/configs"
 	"3-validation-api/internal/verify"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -18,5 +19,5 @@ func main() {
 	}
 
 	fmt.Println("Server is listening on port 8081")
-	server.ListenAndServe()
+	log.Fatal(server.ListenAndServe())
 }

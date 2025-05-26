@@ -9,5 +9,5 @@ type SendResponse struct {
 }
 
 type VerifyResponse struct {
-	Status string `json:"status"`
+	Status bool `json:"status"`
 }

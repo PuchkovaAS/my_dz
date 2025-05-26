@@ -15,7 +15,7 @@ type Config struct {
 type EmailConfig struct {
 	Email       string
 	Password    string
-	Address     string
+	SmtpServer  string
 	SmtpAddress string
 }
 
@@ -32,7 +32,7 @@ func LoadConfig() *Config {
 		Email: EmailConfig{
 			Email:       os.Getenv("EMAIL"),
 			Password:    os.Getenv("PASSWORD"),
-			Address:     os.Getenv("ADDRESS"),
+			SmtpServer:  os.Getenv("SMTP_SERVER"),
 			SmtpAddress: os.Getenv("SMTP_ADDRESS"),
 		},
 		Storage: StorageConfig{

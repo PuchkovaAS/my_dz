@@ -5,5 +5,5 @@ import (
 )
 
 func GetHashUrl(serverPath string, hashString string) string {
-	return fmt.Sprintf("%s/{%s}", serverPath, hashString)
+	return fmt.Sprintf("%s/%s", serverPath, hashString)
 }

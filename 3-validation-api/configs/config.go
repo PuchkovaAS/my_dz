@@ -13,10 +13,11 @@ type Config struct {
 }
 
 type EmailConfig struct {
-	Email       string
-	Password    string
-	SmtpServer  string
-	SmtpAddress string
+	Email      string
+	Password   string
+	SmtpHost   string
+	SmtpPort   string
+	SenderName string
 }
 
 type StorageConfig struct {
@@ -30,10 +31,11 @@ func LoadConfig() *Config {
 	}
 	return &Config{
 		Email: EmailConfig{
-			Email:       os.Getenv("EMAIL"),
-			Password:    os.Getenv("PASSWORD"),
-			SmtpServer:  os.Getenv("SMTP_SERVER"),
-			SmtpAddress: os.Getenv("SMTP_ADDRESS"),
+			Email:      os.Getenv("EMAIL"),
+			Password:   os.Getenv("PASSWORD"),
+			SmtpHost:   os.Getenv("SMTP_HOST"),
+			SmtpPort:   os.Getenv("SMTP_PORT"),
+			SenderName: os.Getenv("SENDER_NAME"),
 		},
 		Storage: StorageConfig{
 			Path: os.Getenv("STORAGE_PATH"),

@@ -69,14 +69,15 @@ func CheckHash(storageFile string, hashString string) bool {
 	return found
 }
 
-func AddEmailHash(storageFile string, email string, hashString string) {
+func AddEmailHash(storageFile string, email string, hashString string) error {
 	data, err := readJSON(storageFile)
 	if err != nil {
-		return
+		return err
 	}
 	data = append(data, DataJson{
 		Email: email,
 		Hash:  hashString,
 	})
 	writeJSON(storageFile, data)
+	return nil
 }

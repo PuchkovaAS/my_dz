@@ -49,16 +49,25 @@ func (handler *VerifyHandler) Send() http.HandlerFunc {
 			data := SendResponse{
 				Status: "email did`t send",
 			}
-			response.Json(w, data, http.StatusAccepted)
+			response.Json(w, data, http.StatusConflict)
 			return
 
 		}
 
-		storage.AddEmailHash(
+		err = storage.AddEmailHash(
 			handler.Config.Storage.Path,
 			body.Email,
 			hashString,
 		)
+		if err != nil {
+
+			data := SendResponse{
+				Status: "can`t write your hash in storage",
+			}
+			response.Json(w, data, http.StatusConflict)
+			return
+
+		}
 
 		data := SendResponse{
 			Status: "Ok",

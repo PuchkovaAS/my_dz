@@ -2,6 +2,7 @@ package mailer
 
 import (
 	"3-validation-api/configs"
+	"fmt"
 	"log"
 	"net/smtp"
 
@@ -16,17 +17,25 @@ type SendMsg struct {
 
 func SendEmail(emailConfig *configs.EmailConfig, msg *SendMsg) error {
 	e := email.NewEmail()
-	e.From = emailConfig.Email
+	if emailConfig.SenderName != "" {
+		e.From = fmt.Sprintf(
+			"%s <%s>",
+			emailConfig.SenderName,
+			emailConfig.Email,
+		)
+	} else {
+		e.From = emailConfig.Email
+	}
 	e.To = []string{msg.AddressTo}
 	e.Subject = msg.SubjectMsg
 	e.Text = []byte(msg.TextMsg)
 	err := e.Send(
-		emailConfig.SmtpAddress,
+		fmt.Sprintf("%s:%s", emailConfig.SmtpHost, emailConfig.SmtpPort),
 		smtp.PlainAuth(
 			"",
 			emailConfig.Email,
 			emailConfig.Password,
-			emailConfig.SmtpServer,
+			emailConfig.SmtpHost,
 		),
 	)
 	if err != nil {

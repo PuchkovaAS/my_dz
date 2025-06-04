@@ -24,6 +24,7 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	router.HandleFunc("POST /product", handler.Create())
 	router.HandleFunc("PATCH /product/{id}", handler.Update())
 	router.HandleFunc("DELETE /product/{id}", handler.Delete())
+	router.HandleFunc("GET /product/paggination", handler.Paggination())
 	router.HandleFunc("GET /product/{id}", handler.Get())
 }
 
@@ -112,5 +113,24 @@ func (handler *ProductHandler) Get() http.HandlerFunc {
 		}
 
 		response.Json(w, product, http.StatusOK)
+	}
+}
+
+func (handler *ProductHandler) Paggination() http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		body, err := request.HandleBody[PaggenationRequest](&w, req)
+		if err != nil {
+			return
+		}
+		products, err := handler.ProductRepository.GetProducts(
+			body.Page,
+			body.Limit,
+		)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		response.Json(w, products, http.StatusOK)
 	}
 }

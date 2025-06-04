@@ -57,3 +57,19 @@ func (repo *ProductRepository) GetById(id uint) (*Product, error) {
 
 	return &product, nil
 }
+
+func (repo *ProductRepository) GetProducts(
+	page int32,
+	limit int32,
+) ([]Product, error) {
+	var products []Product
+	result := repo.DataBase.DB.Offset(int((page - 1) * limit)).
+		Limit(int(limit)).
+		Find(&products)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return products, nil
+}

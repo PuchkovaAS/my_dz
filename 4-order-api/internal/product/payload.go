@@ -17,6 +17,6 @@ type ProductUpdateRequest struct {
 }
 
 type PaggenationRequest struct {
-	Page  int32 `json:"page"  validate:"number,gt=0"`
-	Limit int32 `json:"limit" validate:"number,gt=0"`
+	Page  int32 `json:"page"  validate:"min=1"`
+	Limit int32 `json:"limit" validate:"min=1"`
 }

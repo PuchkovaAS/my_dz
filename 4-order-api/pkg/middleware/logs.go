@@ -17,6 +17,7 @@ type Logger struct {
 func NewLogger(config *configs.Config) *Logger {
 	logger := logrus.New()
 	logger.Formatter = new(logrus.JSONFormatter)
+	// тут нет ничего, о чем ты пишешь !!!
 	logger.Level = logrus.TraceLevel
 	logger.Out = os.Stdout
 

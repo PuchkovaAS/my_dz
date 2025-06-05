@@ -14,6 +14,9 @@ func main() {
 	db := db.NewDb(conf)
 	router := http.NewServeMux()
 
+	// Logger
+	logger := middleware.NewLogger(conf)
+
 	// Repositorys
 	productRepository := product.NewProductRepository(db)
 
@@ -26,7 +29,7 @@ func main() {
 	// Middlewares
 	stackMiddlewar := middleware.Chain(
 		middleware.CORS,
-		middleware.Logging,
+		logger.Logging,
 	)
 
 	server := http.Server{

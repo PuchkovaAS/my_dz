@@ -1,0 +1,7 @@
+time="2025-06-05T14:17:19+03:00" level=info msg="GET/product/paggination200 11.441829ms" size=10 tag=middleware
+time="2025-06-05T14:17:28+03:00" level=info msg="GET/product/2200 6.346492ms" size=10 tag=middleware
+time="2025-06-05T14:17:32+03:00" level=info msg="GET/product/3200 895.299µs" size=10 tag=middleware
+time="2025-06-05T14:22:29+03:00" level=info msg="GET /product/3 200 3.02573ms" tag=middleware
+time="2025-06-05T14:26:20+03:00" level=info msg=Success duration=2.440636ms method=GET path=/product/3 status=200 tag=middleware
+time="2025-06-05T14:26:35+03:00" level=warning msg="Client error" duration="673.49µs" method=GET path=/product/434 status=400 tag=middleware
+time="2025-06-05T14:27:16+03:00" level=info msg=Success duration=6.429707ms method=POST path=/product status=201 tag=middleware

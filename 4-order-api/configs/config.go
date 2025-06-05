@@ -9,7 +9,12 @@ import (
 )
 
 type Config struct {
-	Db DbConfig
+	Db     DbConfig
+	Logger LoggerConfig
+}
+
+type LoggerConfig struct {
+	LogFile string
 }
 
 type DbConfig struct {
@@ -32,6 +37,9 @@ func LoadConfig() *Config {
 				os.Getenv("DB_PORT"),
 				os.Getenv("DB_SSLMODE"),
 			),
+		},
+		Logger: LoggerConfig{
+			LogFile: os.Getenv("LOG_FILE"),
 		},
 	}
 }

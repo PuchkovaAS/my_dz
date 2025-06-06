@@ -6,7 +6,7 @@ type ProductCreateRequest struct {
 	Name        string         `json:"name"        validate:"required,min=3,max=20"`
 	Description string         `json:"description" validate:"required"`
 	Images      pq.StringArray `json:"images"      validate:"dive,base64"`
-	Price       float64        `json:"price"       validate:"required,gt=0"`
+	Price       float64        `json:"price"       validate:"gt=0"`
 }
 
 type ProductUpdateRequest struct {

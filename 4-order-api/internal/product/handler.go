@@ -116,21 +116,21 @@ func (handler *ProductHandler) Get() http.HandlerFunc {
 	}
 }
 
-func (handler *ProductHandler) Paggination() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		body, err := request.HandleBody[PaggenationRequest](&w, req)
-		if err != nil {
-			return
-		}
-		products, err := handler.ProductRepository.GetProducts(
-			body.Page,
-			body.Limit,
-		)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		response.Json(w, products, http.StatusOK)
-	}
-}
+// func (handler *ProductHandler) Paggination() http.HandlerFunc {
+// 	return func(w http.ResponseWriter, req *http.Request) {
+// 		body, err := request.HandleBody[PaggenationRequest](&w, req)
+// 		if err != nil {
+// 			return
+// 		}
+// 		products, err := handler.ProductRepository.GetProducts(
+// 			body.Page,
+// 			body.Limit,
+// 		)
+// 		if err != nil {
+// 			http.Error(w, err.Error(), http.StatusBadRequest)
+// 			return
+// 		}
+//
+// 		response.Json(w, products, http.StatusOK)
+// 	}
+// }

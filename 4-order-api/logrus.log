@@ -9,3 +9,6 @@ time="2025-06-05T14:27:16+03:00" level=info msg=Success duration=6.429707ms meth
 {"duration":"2.002617ms","level":"info","method":"GET","msg":"Success","path":"/product/paggination","status":200,"tag":"middleware","time":"2025-06-08T15:09:54+03:00"}
 {"duration":"944.429µs","level":"info","method":"GET","msg":"Success","path":"/product/paggination","status":200,"tag":"middleware","time":"2025-06-08T15:10:01+03:00"}
 {"duration":"902.359µs","level":"info","method":"GET","msg":"Success","path":"/product/paggination","status":200,"tag":"middleware","time":"2025-06-08T15:10:05+03:00"}
+{"duration":"20.004µs","level":"warning","method":"GET","msg":"Client error","path":"/product/paggination","status":400,"tag":"middleware","time":"2025-06-08T15:50:07+03:00"}
+{"duration":"14.361µs","level":"warning","method":"GET","msg":"Client error","path":"/product/pagination","status":400,"tag":"middleware","time":"2025-06-08T15:50:26+03:00"}
+{"duration":"1.86195ms","level":"info","method":"GET","msg":"Success","path":"/product/pagination","status":200,"tag":"middleware","time":"2025-06-08T15:55:04+03:00"}

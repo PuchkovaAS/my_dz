@@ -59,8 +59,8 @@ func (repo *ProductRepository) GetById(id uint) (*Product, error) {
 }
 
 func (repo *ProductRepository) GetProducts(
-	page int32,
-	limit int32,
+	page uint,
+	limit uint,
 ) ([]Product, error) {
 	var products []Product
 	result := repo.DataBase.DB.Offset(int((page - 1) * limit)).

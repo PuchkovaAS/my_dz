@@ -24,7 +24,7 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	router.HandleFunc("POST /product", handler.Create())
 	router.HandleFunc("PATCH /product/{id}", handler.Update())
 	router.HandleFunc("DELETE /product/{id}", handler.Delete())
-	router.HandleFunc("GET /product/paggination", handler.Paggination())
+	router.HandleFunc("GET /product/pagination", handler.Paggination())
 	router.HandleFunc("GET /product/{id}", handler.Get())
 }
 
@@ -118,13 +118,28 @@ func (handler *ProductHandler) Get() http.HandlerFunc {
 
 func (handler *ProductHandler) Paggination() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		body, err := request.HandleBody[PaggenationRequest](&w, req)
+		pageStr := req.URL.Query().Get("page")
+		limitStr := req.URL.Query().Get("limit")
+
+		if pageStr == "" {
+			pageStr = "1"
+		}
+		if limitStr == "" {
+			limitStr = "10"
+		}
+		page, err := strconv.ParseUint(pageStr, 10, 32)
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		limit, err := strconv.ParseUint(limitStr, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		products, err := handler.ProductRepository.GetProducts(
-			body.Page,
-			body.Limit,
+			uint(page),
+			uint(limit),
 		)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)

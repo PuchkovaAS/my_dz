@@ -15,8 +15,3 @@ type ProductUpdateRequest struct {
 	Images      pq.StringArray `json:"images"      validate:"dive,base64"`
 	Price       float64        `json:"price"       validate:"gt=0"`
 }
-
-type PaggenationRequest struct {
-	Page  int32 `json:"page"  validate:"min=1"` // min1
-	Limit int32 `json:"limit" validate:"min=1"` // min1
-}

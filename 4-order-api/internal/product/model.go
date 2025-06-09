@@ -10,5 +10,5 @@ type Product struct {
 	Name        string
 	Description string
 	Images      pq.StringArray `gorm:"type:varchar(64)[]"`
-	Price       float32        `gorm:"type:decimal(10,2)"` // decimal
+	Price       float32        `gorm:"type:decimal(10,2)"`
 }

@@ -25,7 +25,7 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	router.HandleFunc("PATCH /product/{id}", handler.Update())
 	router.HandleFunc("DELETE /product/{id}", handler.Delete())
 
-	router.HandleFunc("GET /product/pagination", handler.Paggination())
+	router.HandleFunc("GET /product/pagination", handler.Pagination())
 
 	router.HandleFunc("GET /product/{id}", handler.Get())
 }
@@ -118,7 +118,7 @@ func (handler *ProductHandler) Get() http.HandlerFunc {
 	}
 }
 
-func (handler *ProductHandler) Paggination() http.HandlerFunc {
+func (handler *ProductHandler) Pagination() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		pageStr := req.URL.Query().Get("page")
 		limitStr := req.URL.Query().Get("limit")

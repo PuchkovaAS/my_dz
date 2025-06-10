@@ -1,14 +1,5 @@
-time="2025-06-05T14:17:19+03:00" level=info msg="GET/product/paggination200 11.441829ms" size=10 tag=middleware
-time="2025-06-05T14:17:28+03:00" level=info msg="GET/product/2200 6.346492ms" size=10 tag=middleware
-time="2025-06-05T14:17:32+03:00" level=info msg="GET/product/3200 895.299µs" size=10 tag=middleware
-time="2025-06-05T14:22:29+03:00" level=info msg="GET /product/3 200 3.02573ms" tag=middleware
-time="2025-06-05T14:26:20+03:00" level=info msg=Success duration=2.440636ms method=GET path=/product/3 status=200 tag=middleware
-time="2025-06-05T14:26:35+03:00" level=warning msg="Client error" duration="673.49µs" method=GET path=/product/434 status=400 tag=middleware
-time="2025-06-05T14:27:16+03:00" level=info msg=Success duration=6.429707ms method=POST path=/product status=201 tag=middleware
-{"duration":"13.602003ms","level":"info","method":"POST","msg":"Success","path":"/product","status":201,"tag":"middleware","time":"2025-06-08T15:09:50+03:00"}
-{"duration":"2.002617ms","level":"info","method":"GET","msg":"Success","path":"/product/paggination","status":200,"tag":"middleware","time":"2025-06-08T15:09:54+03:00"}
-{"duration":"944.429µs","level":"info","method":"GET","msg":"Success","path":"/product/paggination","status":200,"tag":"middleware","time":"2025-06-08T15:10:01+03:00"}
-{"duration":"902.359µs","level":"info","method":"GET","msg":"Success","path":"/product/paggination","status":200,"tag":"middleware","time":"2025-06-08T15:10:05+03:00"}
-{"duration":"20.004µs","level":"warning","method":"GET","msg":"Client error","path":"/product/paggination","status":400,"tag":"middleware","time":"2025-06-08T15:50:07+03:00"}
-{"duration":"14.361µs","level":"warning","method":"GET","msg":"Client error","path":"/product/pagination","status":400,"tag":"middleware","time":"2025-06-08T15:50:26+03:00"}
-{"duration":"1.86195ms","level":"info","method":"GET","msg":"Success","path":"/product/pagination","status":200,"tag":"middleware","time":"2025-06-08T15:55:04+03:00"}
+{"duration":"14.037264ms","level":"info","method":"GET","msg":"Success","path":"/product/4","status":200,"tag":"middleware","time":"2025-06-10T15:21:21+03:00"}
+{"duration":"643.253µs","level":"info","method":"GET","msg":"Success","path":"/product/pagination","status":200,"tag":"middleware","time":"2025-06-10T15:21:24+03:00"}
+{"duration":"3.343126ms","level":"error","method":"DELETE","msg":"Server error","path":"/product/1","status":500,"tag":"middleware","time":"2025-06-10T15:21:27+03:00"}
+{"duration":"8.747822ms","level":"info","method":"POST","msg":"Success","path":"/product","status":201,"tag":"middleware","time":"2025-06-10T15:21:36+03:00"}
+{"duration":"894.504µs","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":400,"tag":"middleware","time":"2025-06-10T15:21:39+03:00"}

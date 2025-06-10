@@ -32,6 +32,10 @@ func (repo *ProductRepository) Update(product *Product) (*Product, error) {
 		return nil, result.Error
 	}
 
+	if result.RowsAffected == 0 {
+		return nil, fmt.Errorf("%s", "record not round")
+	}
+
 	return product, nil
 }
 

@@ -57,17 +57,17 @@ func (handler *AuthHandler) GetToken() http.HandlerFunc {
 			return
 		}
 
-		isVerify, err := handler.AuthService.VerifyCode(
+		userPhone, err := handler.AuthService.VerifyCode(
 			body.SessionId,
 			uint(body.Code),
 		)
-		if err != nil || !isVerify {
+		if err != nil && userPhone != "" {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
 
 		tokenString, err := handler.JWT.Create(
-			jwt.JWTData{SessionId: body.SessionId},
+			jwt.JWTData{Phone: userPhone},
 		)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

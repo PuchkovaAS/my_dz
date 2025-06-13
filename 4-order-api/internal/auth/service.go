@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"strings"
 )
 
@@ -70,12 +69,10 @@ func (service *AuthService) CreateSession(
 
 func (service *AuthService) VerifyCode(
 	sessionId string, code uint,
-) (bool, error) {
-	fmt.Println(sessionId)
+) (string, error) {
 	existedUser, _ := service.UserRepository.FindBySession(sessionId)
-	fmt.Println(code, existedUser.Code)
 	if existedUser == nil || existedUser.Code != code {
-		return false, errors.New(ErrWrongCode)
+		return "", errors.New(ErrWrongCode)
 	}
-	return true, nil
+	return existedUser.Phone, nil
 }

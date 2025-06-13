@@ -1,6 +1,8 @@
 package product
 
 import (
+	"4-order-api/pkg/jwt"
+	"4-order-api/pkg/middleware"
 	"4-order-api/pkg/request"
 	"4-order-api/pkg/response"
 	"net/http"
@@ -11,6 +13,7 @@ import (
 
 type ProductHandlerDeps struct {
 	ProductRepository *ProductRepository
+	*jwt.JWT
 }
 
 type ProductHandler struct {
@@ -22,7 +25,10 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 		ProductRepository: deps.ProductRepository,
 	}
 	router.HandleFunc("POST /product", handler.Create())
-	router.HandleFunc("PATCH /product/{id}", handler.Update())
+	router.Handle(
+		"PATCH /product/{id}",
+		middleware.IsAuthed(handler.Update(), *deps.JWT),
+	)
 	router.HandleFunc("DELETE /product/{id}", handler.Delete())
 
 	router.HandleFunc("GET /product/pagination", handler.Pagination())

@@ -33,7 +33,10 @@ func main() {
 	// Handlers
 	product.NewProductHandler(
 		router,
-		product.ProductHandlerDeps{ProductRepository: productRepository},
+		product.ProductHandlerDeps{
+			ProductRepository: productRepository,
+			JWT:               jwtService,
+		},
 	)
 
 	auth.NewAuthHandler(router, auth.AuthHandlerDeps{

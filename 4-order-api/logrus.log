@@ -1,22 +1,5 @@
-{"duration":"14.037264ms","level":"info","method":"GET","msg":"Success","path":"/product/4","status":200,"tag":"middleware","time":"2025-06-10T15:21:21+03:00"}
-{"duration":"643.253µs","level":"info","method":"GET","msg":"Success","path":"/product/pagination","status":200,"tag":"middleware","time":"2025-06-10T15:21:24+03:00"}
-{"duration":"3.343126ms","level":"error","method":"DELETE","msg":"Server error","path":"/product/1","status":500,"tag":"middleware","time":"2025-06-10T15:21:27+03:00"}
-{"duration":"8.747822ms","level":"info","method":"POST","msg":"Success","path":"/product","status":201,"tag":"middleware","time":"2025-06-10T15:21:36+03:00"}
-{"duration":"894.504µs","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":400,"tag":"middleware","time":"2025-06-10T15:21:39+03:00"}
-{"duration":"300.447µs","level":"warning","method":"POST","msg":"Client error","path":"/auth/get_code","status":400,"tag":"middleware","time":"2025-06-12T15:34:24+03:00"}
-{"duration":"4.027546ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-12T15:34:34+03:00"}
-{"duration":"29.936µs","level":"warning","method":"POST","msg":"Client error","path":"/auth/get_token","status":400,"tag":"middleware","time":"2025-06-12T15:35:21+03:00"}
-{"duration":"705.548µs","level":"warning","method":"POST","msg":"Client error","path":"/auth/get_token","status":401,"tag":"middleware","time":"2025-06-12T15:35:35+03:00"}
-{"duration":"643.759µs","level":"warning","method":"POST","msg":"Client error","path":"/auth/get_token","status":401,"tag":"middleware","time":"2025-06-12T15:35:57+03:00"}
-{"duration":"4.874143ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-12T15:42:25+03:00"}
-{"duration":"1.701316ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-12T15:44:38+03:00"}
-{"duration":"4.474941ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-12T16:14:21+03:00"}
-{"duration":"760.904µs","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-12T16:14:29+03:00"}
-{"duration":"3.531948ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-12T16:14:37+03:00"}
-{"duration":"1.064324ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-12T16:14:48+03:00"}
-{"duration":"16.919563ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-13T11:50:01+03:00"}
-{"duration":"7.75877ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-13T11:51:21+03:00"}
-{"duration":"5.499995ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-13T11:51:46+03:00"}
-{"duration":"3.857815ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-13T11:51:47+03:00"}
-{"duration":"4.377121ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_code","status":201,"tag":"middleware","time":"2025-06-13T11:54:02+03:00"}
-{"duration":"872.905µs","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-13T11:54:22+03:00"}
+{"duration":"1.558419ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-13T12:34:00+03:00"}
+{"duration":"1.604834ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-13T12:34:45+03:00"}
+{"duration":"5.731µs","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":401,"tag":"middleware","time":"2025-06-13T12:48:40+03:00"}
+{"duration":"4.679722ms","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":400,"tag":"middleware","time":"2025-06-13T12:49:38+03:00"}
+{"duration":"3.415763ms","level":"info","method":"PATCH","msg":"Success","path":"/product/3","status":201,"tag":"middleware","time":"2025-06-13T12:49:43+03:00"}

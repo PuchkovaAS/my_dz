@@ -1,6 +1,8 @@
 package product
 
 import (
+	"4-order-api/pkg/jwt"
+	"4-order-api/pkg/middleware"
 	"4-order-api/pkg/request"
 	"4-order-api/pkg/response"
 	"net/http"
@@ -11,6 +13,7 @@ import (
 
 type ProductHandlerDeps struct {
 	ProductRepository *ProductRepository
+	*jwt.JWT
 }
 
 type ProductHandler struct {
@@ -23,11 +26,33 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	}
 	router.HandleFunc("POST /product", handler.Create())
 	router.HandleFunc("PATCH /product/{id}", handler.Update())
+	router.Handle(
+		"POST /product/{id}/buy",
+		middleware.IsAuthed(handler.Buy(), *deps.JWT),
+	)
 	router.HandleFunc("DELETE /product/{id}", handler.Delete())
 
 	router.HandleFunc("GET /product/pagination", handler.Pagination())
 
 	router.HandleFunc("GET /product/{id}", handler.Get())
+}
+
+func (handler *ProductHandler) Buy() http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		idString := req.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		product, err := handler.ProductRepository.GetById(uint(id))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		response.Json(w, product, http.StatusCreated)
+	}
 }
 
 func (handler *ProductHandler) Create() http.HandlerFunc {

@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Db     DbConfig
 	Logger LoggerConfig
+	Auth   AuthConfig
 }
 
 type LoggerConfig struct {
@@ -19,6 +20,10 @@ type LoggerConfig struct {
 
 type DbConfig struct {
 	Dsn string
+}
+
+type AuthConfig struct {
+	Secret string
 }
 
 func LoadConfig() *Config {
@@ -40,6 +45,10 @@ func LoadConfig() *Config {
 		},
 		Logger: LoggerConfig{
 			LogFile: os.Getenv("LOG_FILE"),
+		},
+
+		Auth: AuthConfig{
+			Secret: os.Getenv("SECRET"),
 		},
 	}
 }

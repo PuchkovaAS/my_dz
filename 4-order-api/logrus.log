@@ -1,5 +1,0 @@
-{"duration":"14.037264ms","level":"info","method":"GET","msg":"Success","path":"/product/4","status":200,"tag":"middleware","time":"2025-06-10T15:21:21+03:00"}
-{"duration":"643.253µs","level":"info","method":"GET","msg":"Success","path":"/product/pagination","status":200,"tag":"middleware","time":"2025-06-10T15:21:24+03:00"}
-{"duration":"3.343126ms","level":"error","method":"DELETE","msg":"Server error","path":"/product/1","status":500,"tag":"middleware","time":"2025-06-10T15:21:27+03:00"}
-{"duration":"8.747822ms","level":"info","method":"POST","msg":"Success","path":"/product","status":201,"tag":"middleware","time":"2025-06-10T15:21:36+03:00"}
-{"duration":"894.504µs","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":400,"tag":"middleware","time":"2025-06-10T15:21:39+03:00"}

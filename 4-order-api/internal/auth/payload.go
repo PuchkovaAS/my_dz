@@ -10,7 +10,7 @@ type GetAuthCodeResponse struct {
 
 type GetTokenRequest struct {
 	SessionId string `json:"sessionID" validate:"required"`
-	Code      uint   `json: "code" validate:"required, number, gt0"`
+	Code      uint   `json:"code"      validate:"required, number, gt0"`
 }
 
 type GetTokenResponse struct {

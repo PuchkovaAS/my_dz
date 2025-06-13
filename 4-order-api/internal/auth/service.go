@@ -32,8 +32,15 @@ func (service *AuthService) CreateSession(
 	existedUser, _ := service.UserRepository.FindByPhone(phone)
 
 	sessionId, err := generateSecureSessionID()
-	if err != nil {
-		return nil, err
+	for {
+		if err != nil {
+			return nil, err
+		}
+		userExist, _ := service.UserRepository.FindBySession(sessionId)
+		if userExist == nil {
+			break
+		}
+		sessionId, err = generateSecureSessionID()
 	}
 
 	if existedUser != nil {

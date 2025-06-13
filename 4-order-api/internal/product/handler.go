@@ -25,15 +25,34 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 		ProductRepository: deps.ProductRepository,
 	}
 	router.HandleFunc("POST /product", handler.Create())
+	router.HandleFunc("PATCH /product/{id}", handler.Update())
 	router.Handle(
-		"PATCH /product/{id}",
-		middleware.IsAuthed(handler.Update(), *deps.JWT),
+		"POST /product/{id}/buy",
+		middleware.IsAuthed(handler.Buy(), *deps.JWT),
 	)
 	router.HandleFunc("DELETE /product/{id}", handler.Delete())
 
 	router.HandleFunc("GET /product/pagination", handler.Pagination())
 
 	router.HandleFunc("GET /product/{id}", handler.Get())
+}
+
+func (handler *ProductHandler) Buy() http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		idString := req.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		product, err := handler.ProductRepository.GetById(uint(id))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		response.Json(w, product, http.StatusCreated)
+	}
 }
 
 func (handler *ProductHandler) Create() http.HandlerFunc {

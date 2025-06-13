@@ -1,5 +1,0 @@
-{"duration":"1.558419ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-13T12:34:00+03:00"}
-{"duration":"1.604834ms","level":"info","method":"POST","msg":"Success","path":"/auth/get_token","status":201,"tag":"middleware","time":"2025-06-13T12:34:45+03:00"}
-{"duration":"5.731µs","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":401,"tag":"middleware","time":"2025-06-13T12:48:40+03:00"}
-{"duration":"4.679722ms","level":"warning","method":"PATCH","msg":"Client error","path":"/product/1","status":400,"tag":"middleware","time":"2025-06-13T12:49:38+03:00"}
-{"duration":"3.415763ms","level":"info","method":"PATCH","msg":"Success","path":"/product/3","status":201,"tag":"middleware","time":"2025-06-13T12:49:43+03:00"}

@@ -27,7 +27,7 @@ func generateSecureSessionID() (string, error) {
 
 func (service *AuthService) CreateSession(
 	phone string,
-) (*user.UserId, error) {
+) (*user.User, error) {
 	existedUser, _ := service.UserRepository.FindByPhone(phone)
 
 	sessionId, err := generateSecureSessionID()
@@ -52,7 +52,7 @@ func (service *AuthService) CreateSession(
 		return existedUser, nil
 	} else {
 
-		user := &user.UserId{
+		user := &user.User{
 			Phone:     phone,
 			Code:      3452,
 			SessionId: sessionId,

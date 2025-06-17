@@ -16,7 +16,7 @@ func NewUserRepository(database *db.Db) *UserRepository {
 	}
 }
 
-func (repo *UserRepository) Create(user *UserId) (*UserId, error) {
+func (repo *UserRepository) Create(user *User) (*User, error) {
 	result := repo.DataBase.DB.Create(user)
 	if result.Error != nil {
 		return nil, result.Error
@@ -25,8 +25,8 @@ func (repo *UserRepository) Create(user *UserId) (*UserId, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) FindBySession(sessionId string) (*UserId, error) {
-	var user UserId
+func (repo *UserRepository) FindBySession(sessionId string) (*User, error) {
+	var user User
 	result := repo.DataBase.DB.First(&user, "session_id = ?", sessionId)
 
 	if result.Error != nil {
@@ -36,7 +36,7 @@ func (repo *UserRepository) FindBySession(sessionId string) (*UserId, error) {
 	return &user, nil
 }
 
-func (repo *UserRepository) Update(user *UserId) (*UserId, error) {
+func (repo *UserRepository) Update(user *User) (*User, error) {
 	result := repo.DataBase.DB.Clauses(clause.Returning{}).Updates(user)
 	if result.Error != nil {
 		return nil, result.Error
@@ -45,8 +45,8 @@ func (repo *UserRepository) Update(user *UserId) (*UserId, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) FindByPhone(phone string) (*UserId, error) {
-	var user UserId
+func (repo *UserRepository) FindByPhone(phone string) (*User, error) {
+	var user User
 	result := repo.DataBase.DB.First(&user, "phone = ?", phone)
 
 	if result.Error != nil {

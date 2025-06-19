@@ -137,10 +137,18 @@ func (repo *OrderRepository) GetOrderWithProducts(
 		product.Product
 		Quantity uint
 	}
+	var orderObj Order
+	err := repo.DataBase.DB.
+		Where("id = ? AND user_id = ?", orderID, userID).
+		First(&orderObj).
+		Error
+	if err != nil {
+		return nil, err
+	}
 
 	var results []Result
 
-	err := repo.DataBase.DB.
+	err = repo.DataBase.DB.
 		Table("order_products").
 		Select("products.id, products.name, products.price, order_products.quantity").
 		Joins("JOIN products ON products.id = order_products.product_id").

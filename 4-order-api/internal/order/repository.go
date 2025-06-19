@@ -73,11 +73,30 @@ func (repo *OrderRepository) FindLastNotFormed(
 func (repo *OrderRepository) AddProduct(
 	order *Order, productObj *product.Product,
 ) (*Order, error) {
-	err := repo.DataBase.DB.Model(order).
-		Association("Products").
-		Append(productObj)
+	var orderProduct OrderProduct
+	err := repo.DataBase.DB.
+		Table("order_products").
+		Where("order_id = ? AND product_id = ?", order.ID, productObj.ID).
+		First(&orderProduct).
+		Error
+
 	if err != nil {
-		return nil, err
+		if err == gorm.ErrRecordNotFound {
+			err := repo.DataBase.DB.Model(order).
+				Association("Products").
+				Append(productObj)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	} else {
+		orderProduct.Quantity += 1
+		err = repo.DataBase.DB.Save(&orderProduct).Error
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = repo.DataBase.DB.Preload("Products").First(order, order.ID).Error

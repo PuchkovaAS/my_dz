@@ -55,3 +55,14 @@ func (repo *UserRepository) FindByPhone(phone string) (*User, error) {
 
 	return &user, nil
 }
+
+func (repo *UserRepository) GetIdByPhone(phone string) (uint, error) {
+	var user User
+	result := repo.DataBase.DB.First(&user, "phone = ?", phone)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return user.ID, nil
+}

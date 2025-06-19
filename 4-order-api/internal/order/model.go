@@ -8,6 +8,13 @@ import (
 
 type Order struct {
 	gorm.Model
-	UserID   uint              `json:"user"     gorm:"index"`
-	Products []product.Product `json:"products" gorm:"many2many:order_products;"`
+	IsFormed bool               `json:"is_formed"`
+	UserID   uint               `json:"user"      gorm:"index"`
+	Products []*product.Product `json:"products"  gorm:"many2many:order_products;joinForeignKey:OrderID;joinReferences:ProductID"`
+}
+
+type OrderProduct struct {
+	OrderID   uint `gorm:"primaryKey"`
+	ProductID uint `gorm:"primaryKey"`
+	Quantity  uint `gorm:"default:1"`
 }

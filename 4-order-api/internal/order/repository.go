@@ -158,7 +158,7 @@ func (repo *OrderRepository) GetOrderWithProducts(
 
 	var results []Result
 
-	err = repo.DataBase.DB.
+	err := repo.DataBase.DB.
 		Table("order_products").
 		Select("products.id, products.name, products.price, products.description, order_products.quantity").
 		Joins("JOIN products ON products.id = order_products.product_id").

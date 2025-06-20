@@ -5,7 +5,6 @@ import (
 	"4-order-api/pkg/jwt"
 	"4-order-api/pkg/middleware"
 	"4-order-api/pkg/response"
-	"errors"
 	"net/http"
 	"strconv"
 )

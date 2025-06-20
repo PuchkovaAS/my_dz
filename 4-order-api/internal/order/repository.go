@@ -129,6 +129,24 @@ func (repo *OrderRepository) GetAllOrders(
 	return orders, nil
 }
 
+func (repo *OrderRepository) IsUsersOrder(
+	orderID uint,
+	userID uint,
+) bool {
+	var orderObj Order
+	err := repo.DataBase.DB.
+		Where("id = ? AND user_id = ?", orderID, userID).
+		First(&orderObj).
+		Error
+	if err != nil {
+		return false
+	}
+	if orderObj.ID == 0 {
+		return false
+	}
+	return true
+}
+
 func (repo *OrderRepository) GetOrderWithProducts(
 	orderID uint,
 	userID uint,
@@ -136,14 +154,6 @@ func (repo *OrderRepository) GetOrderWithProducts(
 	type Result struct {
 		product.Product
 		Quantity uint
-	}
-	var orderObj Order
-	err := repo.DataBase.DB.
-		Where("id = ? AND user_id = ?", orderID, userID).
-		First(&orderObj).
-		Error
-	if err != nil {
-		return nil, err
 	}
 
 	var results []Result

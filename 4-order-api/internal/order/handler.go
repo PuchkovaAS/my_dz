@@ -5,6 +5,7 @@ import (
 	"4-order-api/pkg/jwt"
 	"4-order-api/pkg/middleware"
 	"4-order-api/pkg/response"
+	"errors"
 	"net/http"
 	"strconv"
 )
@@ -82,6 +83,20 @@ func (handler *OrderHandler) GetOrderByID() http.HandlerFunc {
 		orderID, err := strconv.ParseUint(idString, 10, 32)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		isUsersOrder := handler.OrderService.OrderRepository.IsUsersOrder(
+			uint(orderID),
+			userID,
+		)
+
+		if !isUsersOrder {
+			http.Error(
+				w,
+				ErrorCantFindOrder,
+				http.StatusNotFound,
+			)
 			return
 		}
 

@@ -1,6 +1,8 @@
 package order
 
-import "errors"
+import (
+	"errors"
+)
 
 type OrderService struct {
 	OrderRepository *OrderRepository
@@ -17,14 +19,23 @@ func NewOrderService(
 func (service *OrderService) AddToCart(
 	productId uint, userID uint,
 ) (uint, error) {
-	product, _ := service.OrderRepository.GetProductById(productId)
 	existedOrder, _ := service.OrderRepository.FindLastNotFormed(userID)
 	if existedOrder == nil {
-		order, err := service.OrderRepository.CreateNewOrder(product, userID)
-		return order.ID, err
+		existedOrder, err := service.OrderRepository.CreateNewOrder(
+			productId,
+			userID,
+		)
+		if err != nil {
+			return 0, err
+		}
+
+		err = service.OrderRepository.AddProduct(existedOrder, productId)
+		return existedOrder.ID, err
+
 	} else {
-		order, err := service.OrderRepository.AddProduct(existedOrder, product)
-		return order.ID, err
+
+		err := service.OrderRepository.AddProduct(existedOrder, productId)
+		return existedOrder.ID, err
 	}
 }
 

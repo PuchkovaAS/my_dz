@@ -4,6 +4,7 @@ import (
 	"4-order-api/internal/product"
 	"4-order-api/pkg/db"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -40,18 +41,15 @@ func (repo *OrderRepository) GetProductById(id uint) (*product.Product, error) {
 }
 
 func (repo *OrderRepository) CreateNewOrder(
-	productObj *product.Product, userID uint,
+	productID uint, userID uint,
 ) (*Order, error) {
-	newOrder := &Order{
+	order := Order{
 		UserID:   userID,
-		Products: []*product.Product{productObj},
+		IsFormed: false,
 	}
 
-	result := repo.DataBase.DB.Create(newOrder)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return newOrder, nil
+	err := repo.DataBase.DB.Create(&order).Error
+	return &order, err
 }
 
 func (repo *OrderRepository) FindLastNotFormed(
@@ -71,36 +69,29 @@ func (repo *OrderRepository) FindLastNotFormed(
 }
 
 func (repo *OrderRepository) AddProduct(
-	order *Order, productObj *product.Product,
-) (*Order, error) {
-	var orderProduct OrderProduct
-	err := repo.DataBase.DB.
-		Table("order_products").
-		Where("order_id = ? AND product_id = ?", order.ID, productObj.ID).
-		First(&orderProduct).
-		Error
+	order *Order, productID uint,
+) error {
+	var existingItem OrderProduct
+	result := repo.DataBase.DB.
+		Where("order_id = ? AND product_id = ?", order.ID, productID).
+		First(&existingItem)
 
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err := repo.DataBase.DB.Model(order).
-				Association("Products").
-				Append(productObj)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, err
-		}
+	if result.Error == nil {
+		newQuantity := existingItem.Quantity + 1
+		return repo.DataBase.DB.
+			Model(&OrderProduct{}).
+			Where("order_id = ? AND product_id = ?", order.ID, productID).
+			Update("quantity", newQuantity).
+			Error
+	} else if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return repo.DataBase.DB.Create(&OrderProduct{
+			OrderID:   order.ID,
+			ProductID: productID,
+			Quantity:  1,
+		}).Error
 	} else {
-		orderProduct.Quantity += 1
-		err = repo.DataBase.DB.Save(&orderProduct).Error
-		if err != nil {
-			return nil, err
-		}
+		return fmt.Errorf("database error: %w", result.Error)
 	}
-
-	err = repo.DataBase.DB.Preload("Products").First(order, order.ID).Error
-	return order, err
 }
 
 func (repo *OrderRepository) OrderFormed(

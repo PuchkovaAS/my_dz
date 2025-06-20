@@ -150,7 +150,7 @@ func (repo *OrderRepository) GetOrderWithProducts(
 
 	err = repo.DataBase.DB.
 		Table("order_products").
-		Select("products.id, products.name, products.price, order_products.quantity").
+		Select("products.id, products.name, products.price, products.description, order_products.quantity").
 		Joins("JOIN products ON products.id = order_products.product_id").
 		Where("order_products.order_id = ?", orderID).
 		Scan(&results).
@@ -163,8 +163,9 @@ func (repo *OrderRepository) GetOrderWithProducts(
 	for i, r := range results {
 		products[i] = ProductWithQuantity{
 			Product: product.Product{
-				Name:  r.Name,
-				Price: r.Price,
+				Name:        r.Name,
+				Price:       r.Price,
+				Description: r.Description,
 			},
 			Quantity: r.Quantity,
 		}

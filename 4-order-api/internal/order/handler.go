@@ -36,7 +36,7 @@ func NewOrderHandler(router *http.ServeMux, deps OrderHandlerDeps) {
 	)
 
 	router.Handle(
-		"GET /my_orders",
+		"GET /my-orders",
 		middleware.IsAuthed(handler.GetAllOrders(), *deps.JWT),
 	)
 }
@@ -111,7 +111,7 @@ func (handler *OrderHandler) GetOrderByID() http.HandlerFunc {
 			}
 		}
 
-		response.Json(w, data, http.StatusAccepted)
+		response.Json(w, data, http.StatusOK)
 	}
 }
 
@@ -145,6 +145,6 @@ func (handler *OrderHandler) GetAllOrders() http.HandlerFunc {
 			data.Orders = append(data.Orders, orderId)
 		}
 
-		response.Json(w, data, http.StatusAccepted)
+		response.Json(w, data, http.StatusOK)
 	}
 }

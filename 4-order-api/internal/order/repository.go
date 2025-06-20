@@ -162,7 +162,7 @@ func (repo *OrderRepository) GetOrderWithProducts(
 		Table("order_products").
 		Select("products.id, products.name, products.price, products.description, order_products.quantity").
 		Joins("JOIN products ON products.id = order_products.product_id").
-		Where("order_products.order_id = ?", orderID).
+		Where("order_products.order_id = ? AND products.is_formed = ?", orderID, true).
 		Scan(&results).
 		Error
 	if err != nil {

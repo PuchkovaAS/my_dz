@@ -135,7 +135,12 @@ func (repo *OrderRepository) IsUsersOrder(
 ) bool {
 	var orderObj Order
 	err := repo.DataBase.DB.
-		Where("id = ? AND user_id = ?", orderID, userID).
+		Where(
+			"id = ? AND user_id = ? AND is_formed = ?",
+			orderID,
+			userID,
+			true,
+		).
 		First(&orderObj).
 		Error
 	if err != nil {
@@ -162,7 +167,7 @@ func (repo *OrderRepository) GetOrderWithProducts(
 		Table("order_products").
 		Select("products.id, products.name, products.price, products.description, order_products.quantity").
 		Joins("JOIN products ON products.id = order_products.product_id").
-		Where("order_products.order_id = ? AND products.is_formed = ?", orderID, true).
+		Where("order_products.order_id = ?", orderID).
 		Scan(&results).
 		Error
 	if err != nil {

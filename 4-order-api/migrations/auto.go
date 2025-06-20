@@ -19,5 +19,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	dataBase.AutoMigrate(&product.Product{}, &user.User{}, &order.Order{})
+	dataBase.AutoMigrate(
+		&product.Product{},
+		&user.User{},
+		&order.Order{},
+		&order.OrderProduct{},
+	)
 }

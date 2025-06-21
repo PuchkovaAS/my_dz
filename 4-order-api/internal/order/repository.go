@@ -157,7 +157,6 @@ func (repo *OrderRepository) GetOrderWithProducts(
 		return nil, err
 	}
 
-	// Формируем результат
 	productsWithQuantity := make([]ProductWithQuantity, len(order.Items))
 	for i, p := range order.Items {
 		productsWithQuantity[i] = ProductWithQuantity{

@@ -106,7 +106,7 @@ func (handler *OrderHandler) GetOrderByID() http.HandlerFunc {
 		if err != nil {
 			http.Error(
 				w,
-				"Internal server error",
+				err.Error(),
 				http.StatusInternalServerError,
 			)
 			return

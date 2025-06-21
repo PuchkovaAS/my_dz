@@ -147,43 +147,27 @@ func (repo *OrderRepository) GetOrderWithProducts(
 	orderID uint,
 	userID uint,
 ) (*OrderWithProducts, error) {
-	type Result struct {
-		product.Product
-		Quantity uint
-	}
+	var order Order
 
-	var results []Result
-
-	err := repo.DataBase.DB.
-		Table("order_products").
-		Select("products.id, products.name, products.price, products.description, order_products.quantity").
-		Joins("JOIN products ON products.id = order_products.product_id").
-		Where("order_products.order_id = ?", orderID).
-		Scan(&results).
+	err := repo.DataBase.DB.Preload("Items.Product").
+		Where("id = ? AND user_id = ?", orderID, userID).
+		First(&order).
 		Error
 	if err != nil {
 		return nil, err
 	}
 
-	products := make([]ProductWithQuantity, len(results))
-	for i, r := range results {
-		products[i] = ProductWithQuantity{
-			Product: product.Product{
-				Name:        r.Name,
-				Price:       r.Price,
-				Description: r.Description,
-			},
-			Quantity: r.Quantity,
+	// Формируем результат
+	productsWithQuantity := make([]ProductWithQuantity, len(order.Items))
+	for i, p := range order.Items {
+		productsWithQuantity[i] = ProductWithQuantity{
+			Product:  p.Product,
+			Quantity: p.Quantity,
 		}
-	}
-
-	var order Order
-	if err := repo.DataBase.DB.First(&order, orderID).Error; err != nil {
-		return nil, err
 	}
 
 	return &OrderWithProducts{
 		ID:       order.ID,
-		Products: products,
+		Products: productsWithQuantity,
 	}, nil
 }

@@ -61,7 +61,7 @@ func (handler *AuthHandler) GetToken() http.HandlerFunc {
 			body.SessionId,
 			uint(body.Code),
 		)
-		if err != nil && userPhone != "" {
+		if err != nil || userPhone == "" {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}

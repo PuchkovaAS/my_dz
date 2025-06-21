@@ -1,10 +1,15 @@
 package user
 
-import "gorm.io/gorm"
+import (
+	"4-order-api/internal/order"
 
-type UserId struct {
+	"gorm.io/gorm"
+)
+
+type User struct {
 	gorm.Model
 	Phone     string
 	SessionId string
 	Code      uint
+	Orders    []order.Order `gorm:"foreignKey:UserID"`
 }

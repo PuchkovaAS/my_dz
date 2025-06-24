@@ -1,12 +1,14 @@
 package main
 
 import (
+	"4-order-api/configs"
 	"4-order-api/internal/order"
 	"4-order-api/internal/product"
 	"4-order-api/internal/user"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -23,8 +25,35 @@ const (
 	authToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6Iis3OTA1OTMyNDc2MiJ9.mOxEtCjoM4v2-3BRnj3SABzp9lRxwYdEMGhND0s0zZc"
 )
 
+func loadConfig() *configs.Config {
+	err := godotenv.Load("test.env")
+	if err != nil {
+		log.Println("Error loading .env file, using default config")
+	}
+	return &configs.Config{
+		Db: configs.DbConfig{
+			Dsn: fmt.Sprintf(
+				"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+				os.Getenv("DB_HOST"),
+				os.Getenv("DB_USER"),
+				os.Getenv("DB_PASSWORD"),
+				os.Getenv("DB_NAME"),
+				os.Getenv("DB_PORT"),
+				os.Getenv("DB_SSLMODE"),
+			),
+		},
+		Logger: configs.LoggerConfig{
+			LogFile: os.Getenv("LOG_FILE"),
+		},
+
+		Auth: configs.AuthConfig{
+			Secret: os.Getenv("SECRET"),
+		},
+	}
+}
+
 func initDb() *gorm.DB {
-	err := godotenv.Load(".env")
+	err := godotenv.Load("test.env")
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +104,7 @@ func getAllProductIds(db *gorm.DB) []uint {
 func removeData(db *gorm.DB, orderId uint) {
 	db.Unscoped().Where("phone = ?", phone).Delete(&user.User{})
 	db.Unscoped().Where("name = ?", "orange").Delete(&product.Product{})
-	db.Unscoped().Where("phone = ?", "banana").Delete(&product.Product{})
+	db.Unscoped().Where("name = ?", "banana").Delete(&product.Product{})
 	db.Unscoped().Where("id = ?", orderId).Delete(&order.Order{})
 }
 
@@ -84,7 +113,8 @@ func TestCreateOrderSuccess(t *testing.T) {
 	initData(db)
 	productIds := getAllProductIds(db)
 
-	testServer := httptest.NewServer(App())
+	conf := loadConfig()
+	testServer := httptest.NewServer(App(conf))
 
 	defer testServer.Close()
 

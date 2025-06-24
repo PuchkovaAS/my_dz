@@ -13,8 +13,7 @@ import (
 	"net/http"
 )
 
-func App() http.Handler {
-	conf := configs.LoadConfig()
+func App(conf *configs.Config) http.Handler {
 	db := db.NewDb(conf)
 	router := http.NewServeMux()
 
@@ -69,7 +68,8 @@ func App() http.Handler {
 }
 
 func main() {
-	app := App()
+	conf := configs.LoadConfig()
+	app := App(conf)
 	server := http.Server{
 		Addr:    ":8081",
 		Handler: app,

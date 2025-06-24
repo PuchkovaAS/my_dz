@@ -1,6 +1,7 @@
 package product
 
 import (
+	"4-order-api/pkg/di"
 	"4-order-api/pkg/jwt"
 	"4-order-api/pkg/middleware"
 	"4-order-api/pkg/request"
@@ -13,16 +14,22 @@ import (
 
 type ProductHandlerDeps struct {
 	ProductRepository *ProductRepository
-	*jwt.JWT
+	JWT               *jwt.JWT
+	IOrderService     di.IOrderService
+	IUserRepository   di.IUserRepository
 }
 
 type ProductHandler struct {
 	ProductRepository *ProductRepository
+	IOrderService     di.IOrderService
+	IUserRepository   di.IUserRepository
 }
 
 func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	handler := &ProductHandler{
 		ProductRepository: deps.ProductRepository,
+		IOrderService:     deps.IOrderService,
+		IUserRepository:   deps.IUserRepository,
 	}
 	router.HandleFunc("POST /product", handler.Create())
 	router.HandleFunc("PATCH /product/{id}", handler.Update())
@@ -39,19 +46,36 @@ func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 
 func (handler *ProductHandler) Buy() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		userPhone, ok := req.Context().Value(middleware.ContextPhoneKey).(string)
+		if !ok {
+			http.Error(w, ErrorWrongJWT, http.StatusBadRequest)
+			return
+		}
+		userID, err := handler.IUserRepository.GetIdByPhone(userPhone)
+		if err != nil {
+			http.Error(w, ErrorWrongJWT, http.StatusBadRequest)
+			return
+		}
+
 		idString := req.PathValue("id")
 		id, err := strconv.ParseUint(idString, 10, 32)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		product, err := handler.ProductRepository.GetById(uint(id))
+
+		orderId, err := handler.IOrderService.AddToCart(uint(id), userID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		response.Json(w, product, http.StatusCreated)
+		data := ProductAddToCartResponse{
+			ProductID: uint(id),
+			OrderID:   orderId,
+		}
+
+		response.Json(w, data, http.StatusCreated)
 	}
 }
 

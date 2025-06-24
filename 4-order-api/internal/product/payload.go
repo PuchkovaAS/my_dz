@@ -15,3 +15,8 @@ type ProductUpdateRequest struct {
 	Images      pq.StringArray `json:"images"      validate:"dive,base64"`
 	Price       float64        `json:"price"       validate:"gt=0"`
 }
+
+type ProductAddToCartResponse struct {
+	ProductID uint `json:"productID"`
+	OrderID   uint `json:"orderID"`
+}

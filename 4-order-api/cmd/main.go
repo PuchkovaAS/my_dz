@@ -3,6 +3,7 @@ package main
 import (
 	"4-order-api/configs"
 	"4-order-api/internal/auth"
+	"4-order-api/internal/order"
 	"4-order-api/internal/product"
 	"4-order-api/internal/user"
 	"4-order-api/pkg/db"
@@ -12,8 +13,7 @@ import (
 	"net/http"
 )
 
-func main() {
-	conf := configs.LoadConfig()
+func App(conf *configs.Config) http.Handler {
 	db := db.NewDb(conf)
 	router := http.NewServeMux()
 
@@ -26,9 +26,11 @@ func main() {
 	// Repositorys
 	productRepository := product.NewProductRepository(db)
 	userRepository := user.NewUserRepository(db)
+	orderRepository := order.NewOrderRepository(db)
 
 	// Services
-	authService := auth.NewUserService(userRepository)
+	authService := auth.NewAuthService(userRepository)
+	orderService := order.NewOrderService(orderRepository)
 
 	// Handlers
 	product.NewProductHandler(
@@ -36,6 +38,8 @@ func main() {
 		product.ProductHandlerDeps{
 			ProductRepository: productRepository,
 			JWT:               jwtService,
+			IOrderService:     orderService,
+			IUserRepository:   userRepository,
 		},
 	)
 
@@ -45,15 +49,30 @@ func main() {
 		JWT:         jwtService,
 	})
 
+	order.NewOrderHandler(
+		router,
+		order.OrderHandlerDeps{
+			IUserRepository: userRepository,
+			OrderService:    orderService,
+			JWT:             jwtService,
+		},
+	)
+
 	// Middlewares
 	stackMiddlewar := middleware.Chain(
 		middleware.CORS,
 		logger.Logging,
 	)
 
+	return stackMiddlewar(router)
+}
+
+func main() {
+	conf := configs.LoadConfig()
+	app := App(conf)
 	server := http.Server{
 		Addr:    ":8081",
-		Handler: stackMiddlewar(router),
+		Handler: app,
 	}
 
 	fmt.Println("Server is listening on port 8081")

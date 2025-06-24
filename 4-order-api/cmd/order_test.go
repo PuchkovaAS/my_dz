@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

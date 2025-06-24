@@ -7,7 +7,6 @@ import (
 	"4-order-api/internal/user"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -77,64 +76,110 @@ func initDb() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+
+	db.AutoMigrate(
+		&product.Product{},
+		&user.User{},
+		&order.Order{},
+		&order.OrderProduct{},
+	)
 	return db
 }
 
-func TestInitData(t *testing.T) {
-	testDB = initDb()
-
-	// Создаем тестового пользователя
-	err := testDB.Create(&user.User{
-		Phone:     phone,
-		SessionId: sessionId,
-		Code:      3452,
-	}).Error
-	if err != nil {
-		t.Fatalf("Failed to create test user: %v", err)
-	}
-
-	// Создаем тестовые продукты
-	products := []product.Product{
-		{
-			Name:        "orange",
-			Description: "fruit",
-			Price:       1.34,
-		},
-		{
-			Name:        "banana",
-			Description: "fruit",
-			Price:       4.34,
-		},
-	}
-
-	for _, p := range products {
-		err := testDB.Create(&p).Error
-		if err != nil {
-			t.Fatalf("Failed to create test product %s: %v", p.Name, err)
-		}
-	}
-
-	// Инициализируем тестовый сервер
-	conf := loadConfig()
-	testServer = httptest.NewServer(App(conf))
+func getAllProductIds(db *gorm.DB) []uint {
+	var ids []uint
+	db.Model(&product.Product{}).Select("id").Find(&ids)
+	return ids
 }
 
-func TestCreateOrderSuccess(t *testing.T) {
-	productIds := getAllProductIds(testDB)
+func TestOrderFlow(t *testing.T) {
+	// Инициализация БД
+	db := initDb()
+	defer func() {
+		if db != nil {
+			sqlDB, _ := db.DB()
+			sqlDB.Close()
+		}
+	}()
 
-	for _, productId := range productIds {
-		url := testServer.URL + fmt.Sprintf("/product/%d/buy", productId)
-		req, err := http.NewRequest("POST", url, nil)
+	// Инициализация тестового сервера ДО выполнения подтестов
+	conf := loadConfig()
+	testServer := httptest.NewServer(App(conf))
+	defer testServer.Close() // Гарантированное закрытие после тестов
+
+	// Переменная для хранения ID заказа
+	var orderID uint
+
+	t.Run("InitTestData", func(t *testing.T) {
+		// Подготовка тестовых данных
+		user := &user.User{
+			Phone:     phone,
+			SessionId: sessionId,
+			Code:      3452,
+		}
+		if err := db.Create(user).Error; err != nil {
+			t.Fatalf("Failed to create test user: %v", err)
+		}
+
+		products := []*product.Product{
+			{Name: "orange", Description: "fruit", Price: 1.34},
+			{Name: "banana", Description: "fruit", Price: 4.34},
+		}
+
+		for _, p := range products {
+			if err := db.Create(p).Error; err != nil {
+				t.Fatalf("Failed to create product %s: %v", p.Name, err)
+			}
+		}
+	})
+
+	t.Run("CreateOrder", func(t *testing.T) {
+		// Получаем ID созданных продуктов
+		var productIDs []uint
+		if err := db.Model(&product.Product{}).Select("id").Find(&productIDs).Error; err != nil {
+			t.Fatalf("Failed to get product IDs: %v", err)
+		}
+
+		// Тестируем покупку продуктов
+		for _, productID := range productIDs {
+			req, err := http.NewRequest(
+				"POST",
+				fmt.Sprintf("%s/product/%d/buy", testServer.URL, productID),
+				nil,
+			)
+			if err != nil {
+				t.Fatalf("Failed to create request: %v", err)
+			}
+			req.Header.Set("Authorization", authToken)
+
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatalf("Request failed: %v", err)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusCreated {
+				t.Errorf(
+					"Expected status %d, got %d",
+					http.StatusCreated,
+					resp.StatusCode,
+				)
+			}
+		}
+
+		// Тестируем оформление заказа
+		req, err := http.NewRequest("POST", testServer.URL+"/order", nil)
 		if err != nil {
 			t.Fatalf("Failed to create request: %v", err)
 		}
 		req.Header.Set("Authorization", authToken)
-		client := &http.Client{}
-		resp, err := client.Do(req)
+
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			t.Fatalf("Request failed: %v", err)
 		}
 		defer resp.Body.Close()
+
 		if resp.StatusCode != http.StatusCreated {
 			t.Errorf(
 				"Expected status %d, got %d",
@@ -142,83 +187,34 @@ func TestCreateOrderSuccess(t *testing.T) {
 				resp.StatusCode,
 			)
 		}
-	}
 
-	url := testServer.URL + "/order"
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		t.Fatalf("Failed to create request: %v", err)
-	}
-	req.Header.Set("Authorization", authToken)
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatalf("Request failed: %v", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusCreated {
-		t.Errorf(
-			"Expected status %d, got %d",
-			http.StatusCreated,
-			resp.StatusCode,
-		)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var resData order.OrderFormedResponse
-	err = json.Unmarshal(body, &resData)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if resData.OrderID == 0 {
-		t.Fatal("OrderId is empty")
-	}
-	createdOrderID = resData.OrderID
-}
-
-func TestCleanupData(t *testing.T) {
-	// Удаляем тестовые данные
-	if createdOrderID != 0 {
-		err := testDB.Unscoped().
-			Where("id = ?", createdOrderID).
-			Delete(&order.Order{}).
-			Error
-		if err != nil {
-			t.Errorf("Failed to delete test order: %v", err)
+		// Парсим ответ
+		var response order.OrderFormedResponse
+		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+			t.Fatalf("Failed to decode response: %v", err)
 		}
-	}
 
-	err := testDB.Unscoped().
-		Where("phone = ?", phone).
-		Delete(&user.User{}).
-		Error
-	if err != nil {
-		t.Errorf("Failed to delete test user: %v", err)
-	}
-
-	products := []string{"orange", "banana"}
-	for _, name := range products {
-		err := testDB.Unscoped().
-			Where("name = ?", name).
-			Delete(&product.Product{}).
-			Error
-		if err != nil {
-			t.Errorf("Failed to delete test product %s: %v", name, err)
+		if response.OrderID == 0 {
+			t.Fatal("OrderID is empty")
 		}
-	}
+		orderID = response.OrderID
+	})
 
-	// Закрываем тестовый сервер
-	if testServer != nil {
-		testServer.Close()
-	}
-}
+	t.Run("CleanupTestData", func(t *testing.T) {
+		// Удаление тестовых данных
+		if orderID != 0 {
+			if err := db.Unscoped().Delete(&order.Order{}, orderID).Error; err != nil {
+				t.Errorf("Failed to delete order: %v", err)
+			}
+		}
 
-func getAllProductIds(db *gorm.DB) []uint {
-	var ids []uint
-	db.Model(&product.Product{}).Select("id").Find(&ids)
-	return ids
+		if err := db.Unscoped().Where("phone = ?", phone).Delete(&user.User{}).Error; err != nil {
+			t.Errorf("Failed to delete test user: %v", err)
+		}
+
+		productNames := []string{"orange", "banana"}
+		if err := db.Unscoped().Where("name IN ?", productNames).Delete(&product.Product{}).Error; err != nil {
+			t.Errorf("Failed to delete test products: %v", err)
+		}
+	})
 }

@@ -10,3 +10,12 @@
 {"duration":"6.266372ms","level":"info","method":"POST","msg":"Success","path":"/product/15/buy","status":201,"tag":"middleware","time":"2025-06-24T17:03:09+03:00"}
 {"duration":"1.769668ms","level":"info","method":"POST","msg":"Success","path":"/product/16/buy","status":201,"tag":"middleware","time":"2025-06-24T17:03:09+03:00"}
 {"duration":"1.719486ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T17:03:09+03:00"}
+{"duration":"6.105769ms","level":"info","method":"POST","msg":"Success","path":"/product/1/buy","status":201,"tag":"middleware","time":"2025-06-24T17:20:57+03:00"}
+{"duration":"2.446551ms","level":"info","method":"POST","msg":"Success","path":"/product/2/buy","status":201,"tag":"middleware","time":"2025-06-24T17:20:57+03:00"}
+{"duration":"1.786945ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T17:20:57+03:00"}
+{"duration":"7.434876ms","level":"info","method":"POST","msg":"Success","path":"/product/1/buy","status":201,"tag":"middleware","time":"2025-06-24T17:21:22+03:00"}
+{"duration":"2.081954ms","level":"info","method":"POST","msg":"Success","path":"/product/2/buy","status":201,"tag":"middleware","time":"2025-06-24T17:21:22+03:00"}
+{"duration":"1.945024ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T17:21:22+03:00"}
+{"duration":"5.702247ms","level":"info","method":"POST","msg":"Success","path":"/product/1/buy","status":201,"tag":"middleware","time":"2025-06-24T17:28:17+03:00"}
+{"duration":"2.143718ms","level":"info","method":"POST","msg":"Success","path":"/product/2/buy","status":201,"tag":"middleware","time":"2025-06-24T17:28:17+03:00"}
+{"duration":"1.723229ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T17:28:17+03:00"}

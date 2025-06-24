@@ -5,3 +5,5 @@
 4-order-api/logrus.log
 
 4-order-api/cmd/.env
+
+4-order-api/cmd/logrus.log

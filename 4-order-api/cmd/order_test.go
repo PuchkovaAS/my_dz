@@ -25,6 +25,12 @@ const (
 	authToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6Iis3OTA1OTMyNDc2MiJ9.mOxEtCjoM4v2-3BRnj3SABzp9lRxwYdEMGhND0s0zZc"
 )
 
+var (
+	testDB         *gorm.DB
+	testServer     *httptest.Server
+	createdOrderID uint
+)
+
 func loadConfig() *configs.Config {
 	err := godotenv.Load("test.env")
 	if err != nil {
@@ -45,7 +51,6 @@ func loadConfig() *configs.Config {
 		Logger: configs.LoggerConfig{
 			LogFile: os.Getenv("LOG_FILE"),
 		},
-
 		Auth: configs.AuthConfig{
 			Secret: os.Getenv("SECRET"),
 		},
@@ -75,48 +80,47 @@ func initDb() *gorm.DB {
 	return db
 }
 
-func initData(db *gorm.DB) {
-	db.Create(&user.User{
+func TestInitData(t *testing.T) {
+	testDB = initDb()
+
+	// Создаем тестового пользователя
+	err := testDB.Create(&user.User{
 		Phone:     phone,
 		SessionId: sessionId,
 		Code:      3452,
-	})
+	}).Error
+	if err != nil {
+		t.Fatalf("Failed to create test user: %v", err)
+	}
 
-	db.Create(&product.Product{
-		Name:        "orange",
-		Description: "fruit",
-		Price:       1.34,
-	})
+	// Создаем тестовые продукты
+	products := []product.Product{
+		{
+			Name:        "orange",
+			Description: "fruit",
+			Price:       1.34,
+		},
+		{
+			Name:        "banana",
+			Description: "fruit",
+			Price:       4.34,
+		},
+	}
 
-	db.Create(&product.Product{
-		Name:        "banana",
-		Description: "fruit",
-		Price:       4.34,
-	})
-}
+	for _, p := range products {
+		err := testDB.Create(&p).Error
+		if err != nil {
+			t.Fatalf("Failed to create test product %s: %v", p.Name, err)
+		}
+	}
 
-func getAllProductIds(db *gorm.DB) []uint {
-	var ids []uint
-	db.Model(&product.Product{}).Select("id").Find(&ids)
-	return ids
-}
-
-func removeData(db *gorm.DB, orderId uint) {
-	db.Unscoped().Where("phone = ?", phone).Delete(&user.User{})
-	db.Unscoped().Where("name = ?", "orange").Delete(&product.Product{})
-	db.Unscoped().Where("name = ?", "banana").Delete(&product.Product{})
-	db.Unscoped().Where("id = ?", orderId).Delete(&order.Order{})
+	// Инициализируем тестовый сервер
+	conf := loadConfig()
+	testServer = httptest.NewServer(App(conf))
 }
 
 func TestCreateOrderSuccess(t *testing.T) {
-	db := initDb()
-	initData(db)
-	productIds := getAllProductIds(db)
-
-	conf := loadConfig()
-	testServer := httptest.NewServer(App(conf))
-
-	defer testServer.Close()
+	productIds := getAllProductIds(testDB)
 
 	for _, productId := range productIds {
 		url := testServer.URL + fmt.Sprintf("/product/%d/buy", productId)
@@ -134,8 +138,8 @@ func TestCreateOrderSuccess(t *testing.T) {
 		if resp.StatusCode != http.StatusCreated {
 			t.Errorf(
 				"Expected status %d, got %d",
-				resp.StatusCode,
 				http.StatusCreated,
+				resp.StatusCode,
 			)
 		}
 	}
@@ -155,8 +159,8 @@ func TestCreateOrderSuccess(t *testing.T) {
 	if resp.StatusCode != http.StatusCreated {
 		t.Errorf(
 			"Expected status %d, got %d",
-			resp.StatusCode,
 			http.StatusCreated,
+			resp.StatusCode,
 		)
 	}
 
@@ -173,5 +177,48 @@ func TestCreateOrderSuccess(t *testing.T) {
 	if resData.OrderID == 0 {
 		t.Fatal("OrderId is empty")
 	}
-	removeData(db, resData.OrderID)
+	createdOrderID = resData.OrderID
+}
+
+func TestCleanupData(t *testing.T) {
+	// Удаляем тестовые данные
+	if createdOrderID != 0 {
+		err := testDB.Unscoped().
+			Where("id = ?", createdOrderID).
+			Delete(&order.Order{}).
+			Error
+		if err != nil {
+			t.Errorf("Failed to delete test order: %v", err)
+		}
+	}
+
+	err := testDB.Unscoped().
+		Where("phone = ?", phone).
+		Delete(&user.User{}).
+		Error
+	if err != nil {
+		t.Errorf("Failed to delete test user: %v", err)
+	}
+
+	products := []string{"orange", "banana"}
+	for _, name := range products {
+		err := testDB.Unscoped().
+			Where("name = ?", name).
+			Delete(&product.Product{}).
+			Error
+		if err != nil {
+			t.Errorf("Failed to delete test product %s: %v", name, err)
+		}
+	}
+
+	// Закрываем тестовый сервер
+	if testServer != nil {
+		testServer.Close()
+	}
+}
+
+func getAllProductIds(db *gorm.DB) []uint {
+	var ids []uint
+	db.Model(&product.Product{}).Select("id").Find(&ids)
+	return ids
 }

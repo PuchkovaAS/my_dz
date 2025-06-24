@@ -1,3 +1,6 @@
 {"duration":"4.79645ms","level":"info","method":"POST","msg":"Success","path":"/product/5/buy","status":201,"tag":"middleware","time":"2025-06-24T16:44:15+03:00"}
 {"duration":"1.755342ms","level":"info","method":"POST","msg":"Success","path":"/product/6/buy","status":201,"tag":"middleware","time":"2025-06-24T16:44:15+03:00"}
 {"duration":"1.739025ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T16:44:15+03:00"}
+{"duration":"4.760324ms","level":"info","method":"POST","msg":"Success","path":"/product/7/buy","status":201,"tag":"middleware","time":"2025-06-24T16:52:38+03:00"}
+{"duration":"1.881806ms","level":"info","method":"POST","msg":"Success","path":"/product/8/buy","status":201,"tag":"middleware","time":"2025-06-24T16:52:38+03:00"}
+{"duration":"2.169439ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T16:52:38+03:00"}

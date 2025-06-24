@@ -1,0 +1,3 @@
+{"duration":"5.221252ms","level":"info","method":"POST","msg":"Success","path":"/product/1/buy","status":201,"tag":"middleware","time":"2025-06-24T15:17:21+03:00"}
+{"duration":"1.674954ms","level":"info","method":"POST","msg":"Success","path":"/product/2/buy","status":201,"tag":"middleware","time":"2025-06-24T15:17:21+03:00"}
+{"duration":"1.958746ms","level":"info","method":"POST","msg":"Success","path":"/order","status":201,"tag":"middleware","time":"2025-06-24T15:17:21+03:00"}
